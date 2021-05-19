@@ -3,6 +3,7 @@ import Search from "../components/search/Search"
 import Catalog from "../components/catalog/Catalog"
 import ProductCreation from "../components/products/ProductCreation"
 import ProductUpdate from "../components/products/ProductUpdate"
+import ProductView from "../components/products/ProductView"
 
 
 const routes = [
@@ -11,6 +12,7 @@ const routes = [
     { path: '/catalog/', component: Catalog, props: (route) => ({searchString: route.query.search}) },
     { path: '/products/add', component: ProductCreation },
     { path: '/products/:uuid/update', component: ProductUpdate },
+    { path: '/products/:uuid', component: ProductView },
   ]
 
 const router = new VueRouter({
