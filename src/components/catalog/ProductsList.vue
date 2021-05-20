@@ -30,7 +30,7 @@
                                 {{tag.name}}
                             </b-badge>
                             <template #footer>
-                                <b-button size="sm">
+                                <b-button size="sm" @click="viewProduct(product.id)">
                                     <b-icon icon="eye" aria-hidden="true"></b-icon> View
                                 </b-button>
                             </template>
@@ -93,6 +93,9 @@ export default {
             if (response.status == 200){
                 this.products = response.data
             }
+      },
+      viewProduct(productId){
+          this.$router.push({path: '/products/' + productId});
       }
   },
   data: () => {

@@ -50,5 +50,20 @@ export let patchExternalRequest = async (url, payload) => {
     }
 }
 
+
+export let deleteExternalRequest = async (url) => {
+    let response = await RestClient.delete(url)
+    .catch(error => {
+        return {
+            data: error.response.data.detail,
+            status: error.response.status
+        }
+    })
+    return {
+        data: response.data,
+        status: response.status
+    }
+}
+
 // let token = VueCookie.get('token')
 // RestClient.defaults.headers.common['Authorization'] = token

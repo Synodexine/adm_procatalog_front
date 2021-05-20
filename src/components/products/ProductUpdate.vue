@@ -83,7 +83,10 @@
                 </b-tabs>
                 </b-card>
                 <ErrorPanel v-bind:errors="errors"></ErrorPanel>
-                <b-button type="submit" style="margin-top: 20px" size="sm" class="mb-2">
+                <b-button style="margin-top: 20px; margin-right: 10px;" size="sm" class="mb-2" variant="secondary" @click="$router.go(-1)">
+                  <b-icon icon="arrow-left" aria-hidden="true"></b-icon> Back
+                </b-button>
+                <b-button type="submit" style="margin-top: 20px" size="sm" class="mb-2" variant="success">
                     <b-icon icon="arrow-repeat" aria-hidden="true"></b-icon> Update product
                 </b-button>
             </b-form>
