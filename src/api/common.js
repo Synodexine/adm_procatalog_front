@@ -6,8 +6,8 @@ export let RestClient = axios.create({
     baseURL: 'http://116.203.149.31:8000/api/',
 })
 
-export let postExternalRequest = async (url, payload) => {
-    return await RestClient.post(url, payload)
+export let postExternalRequest = async (url, payload, restClient = RestClient) => {
+    return await restClient.post(url, payload)
     .catch((error) => {
         return {
             data: error.response.data,
@@ -22,8 +22,8 @@ export let postExternalRequest = async (url, payload) => {
     })
 }
 
-export let getExternalRequest = async (url) => {
-    let response = await RestClient.get(url)
+export let getExternalRequest = async (url, restClient = RestClient) => {
+    let response = await restClient.get(url)
     .catch(error => {
         return {
             data: error.response.data.detail,
@@ -36,8 +36,8 @@ export let getExternalRequest = async (url) => {
     }
 }
 
-export let patchExternalRequest = async (url, payload) => {
-    let response = await RestClient.patch(url, payload)
+export let patchExternalRequest = async (url, payload, restClient = RestClient) => {
+    let response = await restClient.patch(url, payload)
     .catch(error => {
         return {
             data: error.response.data.detail,
@@ -51,8 +51,8 @@ export let patchExternalRequest = async (url, payload) => {
 }
 
 
-export let deleteExternalRequest = async (url) => {
-    let response = await RestClient.delete(url)
+export let deleteExternalRequest = async (url, restClient = RestClient) => {
+    let response = await restClient.delete(url)
     .catch(error => {
         return {
             data: error.response.data.detail,

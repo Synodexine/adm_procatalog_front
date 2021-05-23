@@ -1,6 +1,6 @@
 import { getExternalRequest, postExternalRequest } from './common'
 
-export const Accounts = {
+export const Products = {
     async createProduct(productData) {
         return await postExternalRequest('/products/', productData)
         .then((response) => {

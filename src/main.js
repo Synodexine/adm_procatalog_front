@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import vSelect from 'vue-select'
 import { BootstrapVue, IconsPlugin, BootstrapVueIcons } from 'bootstrap-vue'
@@ -15,7 +14,6 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(IconsPlugin)
 Vue.use(VueRouter)
-Vue.use(Vuex)
 Vue.component('v-select', vSelect)
 
 Vue.config.productionTip = false
