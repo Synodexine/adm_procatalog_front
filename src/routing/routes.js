@@ -4,6 +4,7 @@ import Catalog from "../components/catalog/Catalog"
 import ProductCreation from "../components/products/ProductCreation"
 import ProductUpdate from "../components/products/ProductUpdate"
 import ProductView from "../components/products/ProductView"
+import Register from "../components/accounts/Register"
 
 
 const routes = [
@@ -13,6 +14,7 @@ const routes = [
     { path: '/products/add', component: ProductCreation },
     { path: '/products/:uuid/update', component: ProductUpdate },
     { path: '/products/:uuid', component: ProductView },
+    { path: '/accounts/register', component: Register },
   ]
 
 const router = new VueRouter({

@@ -2,7 +2,7 @@ import { Users } from '../../api/users'
 import {
   SET_USER_INFO,
   UPDATE_USER_INFO
-} from './mutation-types.js'
+} from './mutationTypes'
 
 
 const state= {
@@ -28,8 +28,8 @@ const actions = {
       context.commit('SET_USER_INFO', await Users.getUserInfo(userId).then(response => {return response.data}))
     },
     UPDATE_USER_INFO: async (context, newPrefix) => {
-      Accounts.changePrefix(newPrefix);
-      context.commit('SET_USER_INFO', await Accounts.getUserInfo().then(response => {return response.data}))
+      Users.changePrefix(newPrefix);
+      context.commit('SET_USER_INFO', await Users.getUserInfo().then(response => {return response.data}))
     }
 };
 

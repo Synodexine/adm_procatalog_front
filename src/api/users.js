@@ -32,6 +32,9 @@ export const Users = {
     async verifyToken(token) {
         return await postExternalRequest('/users/verify-token/', {'token': token.split(' ')[1]}, AuthRestClient)
     },
+    async getRoles() {
+        return await (await getExternalRequest('/permissions/roles/', AuthRestClient)).data
+    },
     async getUserInfo(userId) {
         return await getExternalRequest('/users/' + userId + '/', AuthRestClient)
     },

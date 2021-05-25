@@ -9,7 +9,12 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'bootstrap-vue/dist/bootstrap-vue-icons.min.css'
 
 import router from "./routing/routes"
+import { store } from "./storage/index"
 
+
+var VueCookie = require('vue-cookie');
+
+Vue.use(VueCookie);
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use(IconsPlugin)
@@ -21,5 +26,6 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  store,
   render: h => h(App),
 }).$mount('#app')
