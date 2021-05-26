@@ -105,6 +105,18 @@ import ErrorPanel from '../common/ErrorPanel'
 export default {
   components: { ErrorPanel },
   name: 'ProductUpdate',
+  computed: {
+  isEditingAllowed: function() {
+    let user = this.$store.getters.user.info
+    let allowed = false
+    if (user != null)
+        user.role.groups.forEach(group => {
+            if (group.name == 'Writer')
+            allowed = true
+        });
+    return allowed
+    }
+  },
   data: () => {
       return {
           productFetch: null,
@@ -245,42 +257,47 @@ export default {
     }
   },
   async beforeMount() {
-    let response = await getExternalRequest('products/' + this.$route.params.uuid)
-    let responseFetch = response.status == 200;
-    if (responseFetch){
-        await this.getBrands()
-        await this.getTags()
-    
-        let product =  response.data
-        this.productName = product.name
-        this.selectedBrand = product.brand
-
-        for (let i = 0; i < product.tags.length; i++){
-            this.tags.forEach(tagDb => {
-                if (tagDb.name == product.tags[i].name){
-                    product.tags[i].attrs = tagDb.attrs
-                }
-            })
-        }
-        this.selectedTags = product.tags
-
-        for (let i = 0; i < product.variants.length; i++){
-            product.variants[i].attributes_values.forEach(attr => {
-                delete attr.id
-            })
-            product.variants[i].attributes_values.push({name: '', value: ''})
-        }
-        this.variants = product.variants
-
-        for (let i = 0; i < this.tags.length; i++) {
-            for (let j=0; j < this.tags[i].attrs.length; j++) {
-                this.productAllowedAttrs.push(this.tags[i].attrs[j])
-            }
-        }
-        this.productFetch = true;
+    if (!this.isEditingAllowed){
+      this.$router.go(-1)
     }
     else {
-        this.productFetch = false;
+      let response = await getExternalRequest('products/' + this.$route.params.uuid)
+      let responseFetch = response.status == 200;
+      if (responseFetch){
+          await this.getBrands()
+          await this.getTags()
+      
+          let product =  response.data
+          this.productName = product.name
+          this.selectedBrand = product.brand
+
+          for (let i = 0; i < product.tags.length; i++){
+              this.tags.forEach(tagDb => {
+                  if (tagDb.name == product.tags[i].name){
+                      product.tags[i].attrs = tagDb.attrs
+                  }
+              })
+          }
+          this.selectedTags = product.tags
+
+          for (let i = 0; i < product.variants.length; i++){
+              product.variants[i].attributes_values.forEach(attr => {
+                  delete attr.id
+              })
+              product.variants[i].attributes_values.push({name: '', value: ''})
+          }
+          this.variants = product.variants
+
+          for (let i = 0; i < this.tags.length; i++) {
+              for (let j=0; j < this.tags[i].attrs.length; j++) {
+                  this.productAllowedAttrs.push(this.tags[i].attrs[j])
+              }
+          }
+          this.productFetch = true;
+      }
+      else {
+          this.productFetch = false;
+      }
     }
   }
 }

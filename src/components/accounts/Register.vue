@@ -59,7 +59,7 @@
 
 
             <b-button type="submit" style="margin-top: 20px" size="sm" class="mb-2">
-                <b-icon icon="search" aria-hidden="true"></b-icon> Register
+                <b-icon icon="door-closed" aria-hidden="true"></b-icon> Register
             </b-button>
 
             <ErrorPanel v-bind:errors="errors"></ErrorPanel>
@@ -119,6 +119,10 @@ export default {
             }
 
             let response = await (await Users.createUser(user)).data
+            let tokens = await (await Users.obtainUserTokens(this.email, this.password)).data
+            user = await (await Users.verifyToken(tokens.access_token)).data
+            this.$cookie.set('access_token', tokens.accessToken, 1)
+            this.$cookie.set('refresh_token', tokens.refreshToken, 30)
             this.$store.dispatch('GET_USER_INFO', response.id)
             this.$router.push({path: '/', query: {search: this.searchString}});
         },

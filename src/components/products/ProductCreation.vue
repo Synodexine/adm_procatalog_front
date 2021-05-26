@@ -1,6 +1,6 @@
 <template>
     <div class="product-creation-container">
-      <b-container class="bv-example-row" fluid>
+      <b-container v-if="isEditingAllowed" class="bv-example-row" fluid>
         <b-row class="text-center">
           <b-col sm="6">
             <b-form class="form text-left" @submit.stop.prevent @submit="onSubmit">
@@ -92,6 +92,18 @@ import ErrorPanel from '../common/ErrorPanel'
 export default {
   components: { ErrorPanel },
   name: 'ProductCreation',
+  computed: {
+    isEditingAllowed: function() {
+    let user = this.$store.getters.user.info
+    let allowed = false
+    if (user != null)
+        user.role.groups.forEach(group => {
+            if (group.name == 'Writer')
+            allowed = true
+        });
+    return allowed
+    }
+  },
   data: () => {
       return {
           productName: '',
@@ -215,11 +227,13 @@ export default {
           variants: this.variants
         }
         let response = await postExternalRequest('products/', product)
-        if (response.status == 201)
-            for (let i = 0; i < this.variants.length; i++){
-              let currentVariant = this.variants[i]
-              currentVariant.attributes_values.push({name:'', value: ''})
-            }
+        if (response.status == 201){
+          this.$router.push(product.id)
+          for (let i = 0; i < this.variants.length; i++){
+            let currentVariant = this.variants[i]
+            currentVariant.attributes_values.push({name:'', value: ''})
+          }
+        }
         else{
             this.errors.push(response.data)
         }
@@ -227,13 +241,18 @@ export default {
     }
   },
   async beforeMount() {
-    await this.getBrands()
-    await this.getTags()
-    for (let i = 0; i < this.tags.length; i++) {
-      for (let j=0; j < this.tags[i].attrs.length; j++) {
-        this.productAllowedAttrs.push(this.tags[i].attrs[j])
-      }
-    } 
+    if (!this.isEditingAllowed){
+      this.$router.go(-1)
+    }
+    else{
+      await this.getBrands()
+      await this.getTags()
+      for (let i = 0; i < this.tags.length; i++) {
+        for (let j=0; j < this.tags[i].attrs.length; j++) {
+          this.productAllowedAttrs.push(this.tags[i].attrs[j])
+        }
+      } 
+    }
   }
 }
 </script>

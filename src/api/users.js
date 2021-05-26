@@ -22,7 +22,7 @@ export const Users = {
         .then((response) => {
             return {
                 data: {
-                    accessToken: 'Bearer ' + response.data?.access_token,
+                    accessToken: response.data?.access_token,
                     refreshToken: response.data?.refresh_token
                 },
                 status: response.status,
@@ -30,7 +30,10 @@ export const Users = {
         })
     },
     async verifyToken(token) {
-        return await postExternalRequest('/users/verify-token/', {'token': token.split(' ')[1]}, AuthRestClient)
+        return await postExternalRequest('/users/verify-token/', {'token': token}, AuthRestClient)
+    },
+    async refreshTokens(refreshToken) {
+        return await postExternalRequest('/users/refresh-token/', {'token': refreshToken}, AuthRestClient)
     },
     async getRoles() {
         return await (await getExternalRequest('/permissions/roles/', AuthRestClient)).data

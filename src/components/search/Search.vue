@@ -13,7 +13,9 @@
             <b-button type="submit" style="margin-top: 20px" size="sm" class="mb-2">
                 <b-icon icon="search" aria-hidden="true"></b-icon> Search
             </b-button>
-            <b-button style="margin-top: 20px; margin-left: 10px" size="sm" class="mb-2" variant="primary" @click="$router.push('/products/add')">
+            <b-button 
+            v-if="isEditingAllowed"
+            style="margin-top: 20px; margin-left: 10px" size="sm" class="mb-2" variant="primary" @click="$router.push('/products/add')">
                 <b-icon icon="plus" aria-hidden="true"></b-icon> Add product
             </b-button>
         </b-form>
@@ -23,6 +25,18 @@
 <script>
 export default {
   name: 'Search',
+  computed: {
+      isEditingAllowed: function() {
+        let user = this.$store.getters.user.info
+        let allowed = false
+        if (user != null)
+            user.role.groups.forEach(group => {
+                if (group.name == 'Writer')
+                allowed = true
+            });
+        return allowed
+      }
+  },
   data:() => {
       return {
           searchString: ''
@@ -30,6 +44,7 @@ export default {
   },
   methods: {
       executeRequest() {
+          if (this.searchString.length >= 3)
           this.$router.push({path: '/catalog', query: {search: this.searchString}});
       },
       onSubmit(){

@@ -34,10 +34,10 @@
                         <b-button squared variant="outline-secondary" @click="$router.go(-1)">
                             <b-icon icon="arrow-left" aria-hidden="true"></b-icon> Back
                         </b-button>
-                        <b-button squared variant="outline-primary" @click="$router.push(product.id + '/update')">
+                        <b-button v-if="isEditingAllowed" squared variant="outline-primary" @click="$router.push(product.id + '/update')">
                             <b-icon icon="arrow-repeat" aria-hidden="true"></b-icon> Update
                         </b-button>
-                        <b-button squared variant="outline-danger" @click="$bvModal.show('modal-ask-delete')">
+                        <b-button v-if="isEditingAllowed" squared variant="outline-danger" @click="$bvModal.show('modal-ask-delete')">
                             <b-icon icon="trash" aria-hidden="true"></b-icon> Delete
                         </b-button>
                         </b-button-group>
@@ -94,6 +94,18 @@ export default {
   name: 'ProductView',
   components: {
       ErrorPanel
+  },
+    computed: {
+        isEditingAllowed: function() {
+        let user = this.$store.getters.user.info
+        let allowed = false
+        if (user != null)
+            user.role.groups.forEach(group => {
+                if (group.name == 'Writer')
+                allowed = true
+            });
+        return allowed
+        }
   },
   async beforeMount(){
       let response = await getExternalRequest('products/' + this.$route.params.uuid)
