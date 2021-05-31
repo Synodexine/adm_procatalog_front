@@ -3,7 +3,7 @@ import { getExternalRequest, postExternalRequest } from './common'
 
 
 export let AuthRestClient = axios.create({
-    baseURL: 'http://192.168.100.3:8010/api/',
+    baseURL: 'http://116.203.149.31:8010/api/',
 })
 
 

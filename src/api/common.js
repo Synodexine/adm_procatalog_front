@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import VueCookie from 'vue-cookie'
+import VueCookie from 'vue-cookie'
 
 
 export let RestClient = axios.create({
@@ -65,5 +65,7 @@ export let deleteExternalRequest = async (url, restClient = RestClient) => {
     }
 }
 
-// let token = VueCookie.get('token')
-// RestClient.defaults.headers.common['Authorization'] = token
+let token = VueCookie.get('access_token')
+if (token != null){
+    RestClient.defaults.headers.common['Authorization'] = 'Bearer ' + token
+}

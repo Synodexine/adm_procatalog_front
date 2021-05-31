@@ -29,7 +29,7 @@
             <b-col sm="12">
             <b-container class="bv-example-row" fluid>
                 <b-row class="text-left">
-                    <b-col sm="6">
+                    <b-col sm="12">
                         <b-button-group>
                         <b-button squared variant="outline-secondary" @click="$router.go(-1)">
                             <b-icon icon="arrow-left" aria-hidden="true"></b-icon> Back
@@ -46,7 +46,7 @@
                 </b-row>
                 <b-row>
                     <b-col sm="12">
-                        <b-img src="https://i.stack.imgur.com/y9DpT.jpg"></b-img>
+                        <b-img style="width:100%" :src="product.image_link == '' ? 'https://i.stack.imgur.com/y9DpT.jpg': product.image_link"></b-img>
                     </b-col>
                 </b-row>
                 <b-row>

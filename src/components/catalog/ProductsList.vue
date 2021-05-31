@@ -16,7 +16,7 @@
                     sm="4">
                         <b-card
                         :title="product.name" 
-                        img-src="https://i.stack.imgur.com/y9DpT.jpg"
+                        :img-src="product.image_link == '' ? 'https://i.stack.imgur.com/y9DpT.jpg': product.image_link"
                         img-alt="Image"
                         img-top
                         img-height="300"
@@ -89,7 +89,7 @@ export default {
   },
   methods: {
       async searchProducts() {
-            let response = await postExternalRequest('search/products/', {search_string: this.searchString})
+            let response = await postExternalRequest('products/search/', {search_string: this.searchString})
             if (response.status == 200){
                 this.products = response.data
             }

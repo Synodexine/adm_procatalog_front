@@ -1,0 +1,1 @@
+export const SET_IMAGE_LINK = 'SET_IMAGE_LINK'

@@ -24,6 +24,7 @@
                 >
                     <b-form-input lazy id="name" v-model="productName" trim></b-form-input>
                 </b-form-group>
+                <ImageSelector :chosenImageLink="chosenImageLink" :searchString="productName"></ImageSelector>
                 <label for="brand">Brand</label>
                 <v-select id="brand" v-model="selectedBrand" label="name" :options="brands"></v-select>
                 <label for="tags">Tags</label>
@@ -101,9 +102,10 @@
 <script>
 import { getExternalRequest, patchExternalRequest } from '../../api/common'
 import ErrorPanel from '../common/ErrorPanel'
+import ImageSelector from './ImageSelector'
 
 export default {
-  components: { ErrorPanel },
+  components: { ErrorPanel, ImageSelector },
   name: 'ProductUpdate',
   computed: {
   isEditingAllowed: function() {
@@ -124,6 +126,7 @@ export default {
           productName: '',
           brands: [],
           tags: [],
+          chosenImageLink: '',
           selectedBrand: null,
           selectedTags: [],
           variants: [],
@@ -209,6 +212,9 @@ export default {
     },
     async onSubmit() {
       this.errors = []
+      if (!this.isEditingAllowed){
+        this.errors.push('You have no permissions for this!')  
+      }
       if (this.productName.length < 2)
         this.errors.push('The product name must be at least 2 symbols long')
       if (this.selectedBrand == null)
@@ -238,7 +244,8 @@ export default {
             name: this.selectedBrand.name
           },
           tags: this.selectedTags,
-          variants: this.variants
+          variants: this.variants,
+          image_link: this.$store.getters.product.imageLink
         }
         let response = await patchExternalRequest('products/' + this.$route.params.uuid, product)
         if (response.status == 200)
@@ -257,10 +264,7 @@ export default {
     }
   },
   async beforeMount() {
-    if (!this.isEditingAllowed){
-      this.$router.go(-1)
-    }
-    else {
+    this.$store.dispatch('SET_IMAGE_LINK', '')
       let response = await getExternalRequest('products/' + this.$route.params.uuid)
       let responseFetch = response.status == 200;
       if (responseFetch){
@@ -270,6 +274,10 @@ export default {
           let product =  response.data
           this.productName = product.name
           this.selectedBrand = product.brand
+          this.chosenImageLink = product.image_link
+          if (this.chosenImageLink != ''){
+            this.$store.commit('SET_IMAGE_LINK', this.chosenImageLink)
+          }
 
           for (let i = 0; i < product.tags.length; i++){
               this.tags.forEach(tagDb => {
@@ -298,7 +306,6 @@ export default {
       else {
           this.productFetch = false;
       }
-    }
   }
 }
 </script>

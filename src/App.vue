@@ -15,6 +15,7 @@ export default {
     NavigationBar
   },
   async beforeMount(){
+    document.title = 'Product catalog';
     if (this.$store.getters.user.info == null){
       let access_token = this.$cookie.get('access_token')
       if (access_token == null) {
@@ -46,6 +47,7 @@ export default {
 }
 html{
   height: 100%;
+  background-color: #f0f0f0;
 }
 body{
   height: 100%;

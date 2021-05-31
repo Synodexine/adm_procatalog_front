@@ -14,6 +14,7 @@
                 >
                     <b-form-input lazy id="name" v-model="productName" trim></b-form-input>
                 </b-form-group>
+                <ImageSelector :chosenImageLink="chosenImageLink" :searchString="productName"></ImageSelector>
                 <label for="brand">Brand</label>
                 <v-select id="brand" v-model="selectedBrand" label="name" :options="brands"></v-select>
                 <label for="tags">Tags</label>
@@ -88,9 +89,10 @@
 <script>
 import { getExternalRequest, postExternalRequest } from '../../api/common'
 import ErrorPanel from '../common/ErrorPanel'
+import ImageSelector from './ImageSelector'
 
 export default {
-  components: { ErrorPanel },
+  components: { ErrorPanel, ImageSelector },
   name: 'ProductCreation',
   computed: {
     isEditingAllowed: function() {
@@ -107,6 +109,7 @@ export default {
   data: () => {
       return {
           productName: '',
+          chosenImageLink: '',
           brands: [],
           tags: [],
           selectedBrand: null,
@@ -194,6 +197,9 @@ export default {
     },
     async onSubmit() {
       this.errors = []
+      if (!this.isEditingAllowed){
+        this.errors.push('You have no permissions for this!')  
+      }
       if (this.productName.length < 2)
         this.errors.push('The product name must be at least 2 symbols long')
       if (this.selectedBrand == null)
@@ -212,6 +218,7 @@ export default {
               this.errors.push('Variant attribute value must not be blank')
         }
       })
+      console.log(this.chosenImageLink);
       if (this.errors.length == 0) {
         for (let i = 0; i < this.variants.length; i++){
           let currentVariant = this.variants[i]
@@ -224,10 +231,12 @@ export default {
             name: this.selectedBrand.name
           },
           tags: this.selectedTags,
-          variants: this.variants
+          variants: this.variants,
+          image_link: this.$store.getters.product.imageLink
         }
         let response = await postExternalRequest('products/', product)
-        if (response.status == 201){
+        if (response.status == 200){
+          this.$store.dispatch('SET_IMAGE_LINK', '')
           this.$router.push(product.id)
           for (let i = 0; i < this.variants.length; i++){
             let currentVariant = this.variants[i]
@@ -241,10 +250,7 @@ export default {
     }
   },
   async beforeMount() {
-    if (!this.isEditingAllowed){
-      this.$router.go(-1)
-    }
-    else{
+    this.$store.dispatch('SET_IMAGE_LINK', '')
       await this.getBrands()
       await this.getTags()
       for (let i = 0; i < this.tags.length; i++) {
@@ -252,7 +258,6 @@ export default {
           this.productAllowedAttrs.push(this.tags[i].attrs[j])
         }
       } 
-    }
   }
 }
 </script>

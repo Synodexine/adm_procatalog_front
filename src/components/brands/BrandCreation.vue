@@ -1,0 +1,98 @@
+<template>
+    <div class="brand-creation-container">
+      <b-container v-if="isEditingAllowed" class="bv-example-row" fluid>
+        <b-row class="text-center">
+          <b-col sm="6">
+            <b-form class="form text-left" @submit.stop.prevent @submit="onSubmit">
+                <b-form-group
+                id="name-fieldset"
+                description="Enter the brand name."
+                label="Name"
+                label-for="productName"
+                invalid-feedback="Enter at least 2 letters"
+                :state="nameState(brandName)"
+                >
+                    <b-form-input lazy id="name" v-model="brandName" trim></b-form-input>
+                </b-form-group>
+                <ErrorPanel v-bind:errors="errors"></ErrorPanel>
+                <b-button type="submit" style="margin-top: 20px" size="sm" class="mb-2">
+                    <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add brand
+                </b-button>
+            </b-form>
+          </b-col>
+          <b-col sm="6">
+          </b-col>
+        </b-row>
+      </b-container>
+    </div>
+</template>
+
+<script>
+import { postExternalRequest } from '../../api/common'
+import ErrorPanel from '../common/ErrorPanel'
+
+export default {
+  components: { ErrorPanel },
+  name: 'BrandCreation',
+  computed: {
+    isEditingAllowed: function() {
+    let user = this.$store.getters.user.info
+    let allowed = false
+    if (user != null)
+        user.role.groups.forEach(group => {
+            if (group.name == 'Writer')
+            allowed = true
+        });
+    return allowed
+    }
+  },
+  data: () => {
+      return {
+          brandName: '',
+          errors: []
+      }
+  },
+  methods: {
+    nameState(nameToValidate){
+        return nameToValidate.length < 2 && nameToValidate.length != 0 ? false : true
+    },
+    async onSubmit() {
+      this.errors = []
+      if (!this.isEditingAllowed){
+        this.errors.push('You have no permissions for this!')  
+      }
+      if (this.brandName.length < 2)
+        this.errors.push('The product name must be at least 2 symbols long')
+      if (this.errors.length == 0) {
+        let brand = {
+          name: this.brandName
+        }
+        let response = await postExternalRequest('brands/', brand)
+        if (response.status == 200){
+          this.$router.push('/management')
+        }
+        else{
+            this.errors.push(response.data.detail)
+        }
+      }
+    }
+  },
+  async beforeMount() {
+  }
+}
+</script>
+
+<style scoped>
+.brand-creation-container{
+    background-color: #f0f0f0;
+    padding: 50px;
+}
+.v-select{
+    background-color: white;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+/* .active {
+  background-color: #f0f0f0;
+} */
+</style>

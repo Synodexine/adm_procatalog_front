@@ -8,7 +8,7 @@
             <b-nav-item to="/search">
                 <div >Search</div>
             </b-nav-item>
-            <b-nav-item href="#">
+            <b-nav-item href="#" @click="openDocs">
                 <div>Documentation</div>
             </b-nav-item>
         </b-navbar-nav>
@@ -20,6 +20,7 @@
         <b-navbar-nav v-else class="ml-auto">
             <b-nav-item-dropdown :text="$store.getters.user.info.name" right>
                 <b-dropdown-item to="/accounts/info">Account</b-dropdown-item>
+                <b-dropdown-item v-if="isEditingAllowed" to="/management">Management</b-dropdown-item>
                 <b-dropdown-item id='about-button'>About</b-dropdown-item>
                 <b-popover
                 :target="'about-button'"
@@ -41,6 +42,26 @@ export default {
   computed: {
       getUser(){
           return this.$store.getters.user
+      },
+      isEditingAllowed: function() {
+        let user = this.$store.getters.user.info
+        let allowed = false
+        if (user != null)
+            user.role.groups.forEach(group => {
+                if (group.name == 'Writer')
+                allowed = true
+            });
+        return allowed
+      },
+      isAdminAllowed: function() {
+        let user = this.$store.getters.user.info
+        let allowed = false
+        if (user != null)
+            user.role.groups.forEach(group => {
+                if (group.name == 'Admin')
+                allowed = true
+            });
+        return allowed
       }
   },
   methods: {
@@ -53,7 +74,11 @@ export default {
           console.log(this.$cookie.get('access_token'))
           this.$router.push('/search')
           this.$router.go()
+      },
+      openDocs(){
+          window.open('http://116.203.149.31:8000/docs/', '_blank')
       }
+
   }
 }
 </script>
@@ -62,8 +87,15 @@ export default {
 /* .nav-bar {
     color: white;
 } */
+.navbar-brand{
+    font-size: 17pt;
+}
 .nav-text {
     color: whitesmoke;
+}
+.nav-item{
+    color: whitesmoke;
+    font-size: 15pt;
 }
 .dropdown-toggle{
     color: white;

@@ -62,11 +62,21 @@ export default {
             return this.password.length >= 6
         },
         async executeRequest() {
-            let tokens = await (await Users.obtainUserTokens(this.email, this.password)).data
-            this.$cookie.set('access_token', tokens.accessToken, 1)
-            this.$cookie.set('refresh_token', tokens.refreshToken, 30)
-            this.$store.dispatch('GET_USER_INFO_BY_TOKEN', tokens.accessToken)
-            this.$router.push({path: '/', query: {search: this.searchString}});
+            let response = await Users.obtainUserTokens(this.email, this.password)
+            if (response.status == 200)
+            {
+                let tokens = response.data
+                this.$cookie.set('access_token', tokens.accessToken, 1)
+                this.$cookie.set('refresh_token', tokens.refreshToken, 30)
+                this.$store.dispatch('GET_USER_INFO_BY_TOKEN', tokens.accessToken)
+                this.$router.push({path: '/', query: {search: this.searchString}});
+            }
+            else if (response.status == 404){
+                this.errors.push('Unable to find a user with this credentials')
+            }
+            else {
+                this.errors.push('Sorry! An unknown error occured while logging in')
+            }
         },
         async onSubmit(){
             this.errors = []
