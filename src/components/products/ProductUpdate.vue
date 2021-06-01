@@ -297,10 +297,16 @@ export default {
           this.variants = product.variants
 
           for (let i = 0; i < this.tags.length; i++) {
-              for (let j=0; j < this.tags[i].attrs.length; j++) {
-                  this.productAllowedAttrs.push(this.tags[i].attrs[j])
-              }
-          }
+            for (let j=0; j < this.tags[i].attrs.length; j++) {
+              let contains = false;
+              this.productAllowedAttrs.forEach(attr => {
+                if (!contains)
+                  contains = attr.name == this.tags[i].attrs[j].name
+              })
+              if (!contains)
+                this.productAllowedAttrs.push(this.tags[i].attrs[j])
+            }
+          } 
           this.productFetch = true;
       }
       else {

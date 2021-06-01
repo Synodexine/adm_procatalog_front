@@ -148,8 +148,8 @@ export default {
           selectedTag.attrs.forEach(attr => {
             selectedTagsAttrsNames.push(attr.name);
           })
-          selectedTagsAttrsNames.push(selectedTag.name);
         })
+
 
         variant.attributes_values.forEach(attr => {
           variantAttrsNames.push(attr.name);
@@ -160,6 +160,7 @@ export default {
             variantAllowedAttrs.push(productAttr);
           }
         });
+
         return variantAllowedAttrs
       }
     },
@@ -235,9 +236,10 @@ export default {
           image_link: this.$store.getters.product.imageLink
         }
         let response = await postExternalRequest('products/', product)
+        console.log(response.status)
         if (response.status == 200){
           this.$store.dispatch('SET_IMAGE_LINK', '')
-          this.$router.push(product.id)
+          this.$router.push('/products/'+response.data.id)
           for (let i = 0; i < this.variants.length; i++){
             let currentVariant = this.variants[i]
             currentVariant.attributes_values.push({name:'', value: ''})
@@ -255,7 +257,13 @@ export default {
       await this.getTags()
       for (let i = 0; i < this.tags.length; i++) {
         for (let j=0; j < this.tags[i].attrs.length; j++) {
-          this.productAllowedAttrs.push(this.tags[i].attrs[j])
+          let contains = false;
+          this.productAllowedAttrs.forEach(attr => {
+            if (!contains)
+              contains = attr.name == this.tags[i].attrs[j].name
+          })
+          if (!contains)
+            this.productAllowedAttrs.push(this.tags[i].attrs[j])
         }
       } 
   }
